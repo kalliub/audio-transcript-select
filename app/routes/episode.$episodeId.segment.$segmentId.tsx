@@ -11,6 +11,7 @@ import {
   useOutletContext,
   useParams,
 } from "@remix-run/react";
+import { useEffect } from "react";
 import { DecisionService } from "~/api/DecisionService";
 import DecisionForm from "~/components/DecisionForm";
 import { extractSpeakersArrayFromString } from "~/utils/formatters";
@@ -49,13 +50,42 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   }
 };
 
+const audioPool: HTMLAudioElement[] = [];
+
 const SegmentRoute = () => {
   const navigate = useNavigate();
   const decisionFromDatabase = useLoaderData<typeof loader>();
   const data = useOutletContext<{ segments: Segment[] }>();
-  const { segmentId = "0" } = useParams();
+  const { segmentId = "0", episodeId = "" } = useParams();
   const numberSegmentId = Number(segmentId);
   const segment = data?.segments[numberSegmentId];
+
+  useEffect(() => {
+    function playAudio(url: string) {
+      // Stop all playing audios first
+      audioPool.forEach((audio) => {
+        if (!audio.paused) {
+          audio.pause();
+          audio.currentTime = 0;
+        }
+      });
+
+      // Find or create an Audio object for the new URL
+      let audio = audioPool.find((a) => a.src === url);
+      if (!audio) {
+        audio = new Audio(url);
+        audioPool.push(audio);
+      }
+
+      audio.play();
+    }
+
+    playAudio(
+      `${ENV.ASSETS_URL}/data/${episodeId}/fragments/${segment.start}_${segment.end}.mp3`,
+    );
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [segmentId]);
 
   if (!segment) {
     return (

@@ -2,6 +2,7 @@ import { z } from "zod";
 
 const schema = z.object({
   MONGO_DB_URL: z.string(),
+  ASSETS_URL: z.string(),
 });
 
 type ENV = z.infer<typeof schema>;

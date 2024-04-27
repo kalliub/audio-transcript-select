@@ -1,6 +1,50 @@
 import { ApiService } from "./ApiService";
 
 export class DecisionService extends ApiService {
+  public async getDecisionsGroupedByEpisode() {
+    try {
+      const decisionRecords = await this.prisma.decision.findMany({
+        orderBy: {
+          segment_id: "asc",
+        },
+      });
+
+      const groupedByEpisode = decisionRecords.reduce(
+        (grouped: { [episode: number]: typeof decisionRecords }, decision) => {
+          const key = decision.episode_id;
+          if (!grouped[key]) {
+            grouped[key] = [];
+          }
+          grouped[key].push(decision);
+          return grouped;
+        },
+        {},
+      );
+
+      return groupedByEpisode;
+    } catch (error) {
+      console.error("Error getting decisions:", error);
+      throw new Error("Error getting Decisions from the database: " + error);
+    }
+  }
+
+  public async getDecisionsByEpisode(episodeId: string) {
+    try {
+      const decisionRecords = await this.prisma.decision.findMany({
+        where: {
+          episode_id: parseInt(episodeId, 10),
+        },
+        orderBy: {
+          segment_id: "asc",
+        },
+      });
+      return decisionRecords;
+    } catch (error) {
+      console.error("Error getting decisions:", error);
+      throw new Error("Error getting Decisions from the database: " + error);
+    }
+  }
+
   public async getDecision({
     episodeId,
     segmentId,

@@ -1,8 +1,8 @@
-import { Button, Grid, TextField } from "@mui/material";
+import { Button, Grid, TextField, Tooltip } from "@mui/material";
 import type { MetaFunction } from "@remix-run/node";
-import { Link, useNavigate } from "@remix-run/react";
+import { Link, useFetcher, useNavigate } from "@remix-run/react";
 import { useState } from "react";
-import Icon from "~/components/CustomIcon";
+import CustomIcon from "~/components/CustomIcon";
 
 export const meta: MetaFunction = () => {
   return [
@@ -14,11 +14,40 @@ export const meta: MetaFunction = () => {
 const Index = () => {
   const navigate = useNavigate();
   const [goto, setGoto] = useState(1);
+  const downloadEverythingFetcher = useFetcher();
   const startEpisodeLink = `/episode/${goto}/segment/0`;
 
   return (
     <Grid container flexDirection="column" gap={1}>
-      <h1>Episodes</h1>
+      <Grid container alignItems="center" gap={2}>
+        <h1>Episodes</h1>
+        <Tooltip
+          title="Download JSON with all submitted speakers"
+          placement="right"
+          arrow
+        >
+          <Link
+            to={`/episodes/download`}
+            download={`all-segments.json`}
+            reloadDocument
+          >
+            <Button
+              variant="text"
+              onClick={() => {
+                downloadEverythingFetcher.submit(
+                  {},
+                  {
+                    action: `/episodes/download`,
+                    method: "GET",
+                  },
+                );
+              }}
+            >
+              <CustomIcon name="download-alt" size="large" />
+            </Button>
+          </Link>
+        </Tooltip>
+      </Grid>
 
       <Grid container alignItems="center" gap={2}>
         <TextField
@@ -38,7 +67,7 @@ const Index = () => {
         />
         <Link to={startEpisodeLink}>
           <Button variant="contained" disabled={goto < 1 || goto > 200}>
-            <Icon name="angle-right" />
+            <CustomIcon name="angle-right" />
           </Button>
         </Link>
       </Grid>
