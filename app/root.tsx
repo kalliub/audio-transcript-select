@@ -4,12 +4,24 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  ShouldRevalidateFunction,
 } from "@remix-run/react";
 import { ReactNode, useContext, useEffect } from "react";
 import ClientStyleContext from "./styles/ClientStyleContext";
 import ServerStyleContext from "./styles/server.context";
 import { withEmotionCache } from "@emotion/react";
-import { LinksFunction } from "@remix-run/node";
+import { LinksFunction, LoaderFunction, json } from "@remix-run/node";
+import { publicEnvVars } from "./config/env.server";
+import pick from "lodash.pick";
+
+export const loader: LoaderFunction = () => {
+  // Loading public variables into the application frontend.
+  return json({
+    ENV: pick(ENV, publicEnvVars),
+  });
+};
+
+export const shouldRevalidate: ShouldRevalidateFunction = () => false;
 
 export const links: LinksFunction = () => [
   {
@@ -65,8 +77,14 @@ const Document = withEmotionCache(
           style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}
         >
           {children}
+          {/* Including selected env variables to client-side */}
+          <script
+            // eslint-disable-next-line react/no-danger
+            dangerouslySetInnerHTML={{
+              __html: `window.ENV = ${JSON.stringify(ENV)}`,
+            }}
+          />
           <ScrollRestoration />
-
           <Scripts />
         </body>
       </html>

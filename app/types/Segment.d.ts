@@ -1,12 +1,7 @@
 type Segment = {
   id: number;
-  seek: number;
-  start: number;
-  end: number;
+  start: string;
+  end: string;
+  speakers: string;
   text: string;
-  tokens: number[];
-  temperature: number;
-  avg_logprob: number;
-  compression_ratio: number;
-  no_speech_prob: number;
 };

@@ -1,70 +1,103 @@
-import { Button, Grid, TextField } from "@mui/material";
+import { Box, Button, Grid } from "@mui/material";
 import {
-  Form,
+  ActionFunctionArgs,
+  LoaderFunctionArgs,
+  json,
+  redirect,
+} from "@remix-run/node";
+import {
+  useLoaderData,
   useNavigate,
   useOutletContext,
   useParams,
 } from "@remix-run/react";
-import { useState } from "react";
+import { DecisionService } from "~/api/DecisionService";
+import DecisionForm from "~/components/DecisionForm";
+import { extractSpeakersArrayFromString } from "~/utils/formatters";
+import { getJSONActionData } from "~/utils/remix";
+
+export const loader = async ({ params }: LoaderFunctionArgs) => {
+  const { episodeId = "", segmentId = "" } = params;
+  const decisionService = new DecisionService();
+  const decisionFromDatabase = await decisionService.getDecision({
+    episodeId,
+    segmentId,
+  });
+
+  return json(decisionFromDatabase);
+};
+
+export const action = async ({ request, params }: ActionFunctionArgs) => {
+  const { episodeId = "", segmentId = "" } = params;
+
+  switch (request.method) {
+    case "POST": {
+      const { speakers } = await getJSONActionData(request);
+      const parsedSpeakers = String(speakers)
+        .split(",")
+        .filter((s) => s && s.length > 0);
+      const decisionService = new DecisionService();
+      await decisionService.upsertDecision({
+        episodeId,
+        segmentId,
+        speakers: parsedSpeakers,
+      });
+      return redirect(`/episode/${episodeId}/segment/${Number(segmentId) + 1}`);
+    }
+    default:
+      return new Response("Method not allowed.", { status: 405 });
+  }
+};
 
 const SegmentRoute = () => {
   const navigate = useNavigate();
-  const data = useOutletContext<{
-    segments: Segment[];
-    onSubmitDecision: (newDecision: Decision) => void;
-  }>();
-  const [decisionNumber, setDecisionNumber] = useState<number | null>(null);
-  const { segmentId = "0", episodeId = "" } = useParams();
+  const decisionFromDatabase = useLoaderData<typeof loader>();
+  const data = useOutletContext<{ segments: Segment[] }>();
+  const { segmentId = "0" } = useParams();
   const numberSegmentId = Number(segmentId);
   const segment = data?.segments[numberSegmentId];
-  const nextSegmentLink = `/episode/${episodeId}/segment/${numberSegmentId + 1}`;
 
   if (!segment) {
-    return <h1>This segment does not exist</h1>;
+    return (
+      <Grid container flexDirection="column" gap={2}>
+        <h1>Segment not found</h1>
+        <Button onClick={() => navigate(-1)} variant="contained">
+          Go back
+        </Button>
+      </Grid>
+    );
   }
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
-    data.onSubmitDecision({
-      segment,
-      decision: decisionNumber?.toString() ?? "-",
-    });
-    navigate(nextSegmentLink);
-  };
 
   return (
     <Grid container flexDirection="column" gap={2}>
-      {segment.text}
+      <Box
+        display="flex"
+        flexDirection="column"
+        gap={1}
+        border={`1px solid rgba(0,0,0,0.2)`}
+        p={2}
+      >
+        <h3 style={{ fontSize: 22, margin: 0 }}>
+          {`# ${numberSegmentId} `}
+          <span style={{ fontSize: 14, fontWeight: "normal" }}>
+            of {data.segments.length - 1} segments
+          </span>
+        </h3>
 
-      <Grid item xs={3}>
-        <Form onSubmit={handleSubmit} style={{ display: "flex", gap: "8px" }}>
-          <TextField
-            label="Decision"
-            size="small"
-            type="number"
-            onChange={(e) => setDecisionNumber(Number(e.target.value))}
-            inputProps={{
-              min: 0,
-            }}
-            // eslint-disable-next-line jsx-a11y/no-autofocus
-            autoFocus
-          />
+        <span>
+          Timestamp: {segment.start} ~ {segment.end}
+        </span>
+      </Box>
+      <span style={{ backgroundColor: "rgba(0,0,0,0.1)", padding: "8px 8px" }}>
+        {segment.text}
+      </span>
 
-          <Button
-            type="submit"
-            variant="contained"
-            onClick={() =>
-              data.onSubmitDecision({
-                segment,
-                decision: decisionNumber?.toString() ?? "-",
-              })
-            }
-          >
-            submit
-          </Button>
-        </Form>
-      </Grid>
+      <DecisionForm
+        defaultSpeaker={
+          decisionFromDatabase?.speakers ||
+          extractSpeakersArrayFromString(segment.speakers)
+        }
+      />
     </Grid>
   );
 };

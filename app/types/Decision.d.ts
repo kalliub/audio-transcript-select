@@ -1,4 +1,4 @@
 type Decision = {
   segment: Segment;
-  decision: string;
+  speakers: string[];
 };
