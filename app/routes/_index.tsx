@@ -1,4 +1,8 @@
+import { Button, Grid, TextField } from "@mui/material";
 import type { MetaFunction } from "@remix-run/node";
+import { Link, useNavigate } from "@remix-run/react";
+import { useState } from "react";
+import Icon from "~/components/CustomIcon";
 
 export const meta: MetaFunction = () => {
   return [
@@ -7,35 +11,39 @@ export const meta: MetaFunction = () => {
   ];
 };
 
-export default function Index() {
+const Index = () => {
+  const navigate = useNavigate();
+  const [goto, setGoto] = useState(1);
+  const startEpisodeLink = `/episode/${goto}/segment/0`;
+
   return (
-    <div style={{ fontFamily: "system-ui, sans-serif", lineHeight: "1.8" }}>
-      <h1>Welcome to Remix</h1>
-      <ul>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/blog"
-            rel="noreferrer"
-          >
-            15m Quickstart Blog Tutorial
-          </a>
-        </li>
-        <li>
-          <a
-            target="_blank"
-            href="https://remix.run/tutorials/jokes"
-            rel="noreferrer"
-          >
-            Deep Dive Jokes App Tutorial
-          </a>
-        </li>
-        <li>
-          <a target="_blank" href="https://remix.run/docs" rel="noreferrer">
-            Remix Docs
-          </a>
-        </li>
-      </ul>
-    </div>
+    <Grid container flexDirection="column" gap={1}>
+      <h1>Episodes</h1>
+
+      <Grid container alignItems="center" gap={2}>
+        <TextField
+          size="small"
+          placeholder="Go to episode..."
+          type="number"
+          inputProps={{ min: 1 }}
+          onChange={(e) => setGoto(Number(e.target.value ?? 1))}
+          error={goto < 1 || goto > 200}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              if (goto >= 1 && goto <= 200) {
+                navigate(startEpisodeLink);
+              }
+            }
+          }}
+        />
+        <Link to={startEpisodeLink}>
+          <Button variant="contained" disabled={goto < 1 || goto > 200}>
+            <Icon name="angle-right" />
+          </Button>
+        </Link>
+      </Grid>
+    </Grid>
   );
-}
+};
+
+export default Index;
