@@ -1,36 +1,30 @@
-# Welcome to Remix + Vite!
+# Audio Transcription Selector
 
-📖 See the [Remix docs](https://remix.run/docs) and the [Remix Vite docs](https://remix.run/docs/en/main/guides/vite) for details on supported features.
+## Requirements
 
-## Development
+- Node.js (18+)
+- npm
+- Python3
+- MongoDB database connection url
 
-Run the Vite dev server:
+## How to Run
 
-```shellscript
-npm run dev
-```
+1. Clone the repository
 
-## Deployment
+2. Install dependencies: `npm install`
 
-First, build your app for production:
+3. Configure the env file according to the `.env.example`
 
-```sh
-npm run build
-```
+4. Copy the data files to the `data` folder: `/app/data/<episode-number>`.
 
-Then run the app in production mode:
+5. Run Prisma to sync the database: `npx prisma db push`
 
-```sh
-npm start
-```
+6. On a separate console tab, run the python http.server on the project root folder to serve the static files: `python3 -m http.server`
 
-Now you'll need to pick a host to deploy it to.
+7. Back on the first tab, run the frontend application: `npm run dev`
 
-### DIY
+8. Access the application on `http://localhost:3000`
 
-If you're familiar with deploying Node applications, the built-in Remix app server is production-ready.
+## Additional Info
 
-Make sure to deploy the output of `npm run build`
-
-- `build/server`
-- `build/client`
+1. The data JSON should be named `data.json` and the audio folder `fragments/`, with the audio files named as `<timestamp-start>_<timestamp-end>.mp3`, just like the `data.json` file.
