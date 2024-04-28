@@ -22,7 +22,7 @@ const Index = () => {
       <Grid container alignItems="center" gap={2}>
         <h1>Episodes</h1>
         <Tooltip
-          title="Download JSON with all submitted speakers"
+          title="Download JSON file with EVERY EPISODE submitted to the database"
           placement="right"
           arrow
         >

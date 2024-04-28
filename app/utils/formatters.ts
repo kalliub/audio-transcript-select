@@ -3,5 +3,5 @@ export const extractSpeakersArrayFromString = (rawSpeakers: string) => {
 };
 
 export const cleanSpeakersString = (rawSpeakers: string) => {
-  return rawSpeakers.replaceAll(/[^\d,]|,0|^0/g, "");
+  return rawSpeakers.replaceAll(/[^\d,]/g, "");
 };

@@ -6,6 +6,7 @@ import {
   redirect,
 } from "@remix-run/node";
 import {
+  Link,
   useLoaderData,
   useNavigate,
   useOutletContext,
@@ -16,6 +17,7 @@ import { DecisionService } from "~/api/DecisionService";
 import DecisionForm from "~/components/DecisionForm";
 import { extractSpeakersArrayFromString } from "~/utils/formatters";
 import { getJSONActionData } from "~/utils/remix";
+import CustomIcon from "~/components/CustomIcon";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const { episodeId = "", segmentId = "" } = params;
@@ -61,6 +63,7 @@ const SegmentRoute = () => {
   const segment = data?.segments[numberSegmentId];
 
   useEffect(() => {
+    if (!segment) return;
     function playAudio(url: string) {
       // Stop all playing audios first
       audioPool.forEach((audio) => {
@@ -102,25 +105,42 @@ const SegmentRoute = () => {
     <Grid container flexDirection="column" gap={2}>
       <Box
         display="flex"
+        alignItems="flex-start"
         flexDirection="column"
         gap={1}
         border={`1px solid rgba(0,0,0,0.2)`}
         p={2}
       >
-        <h3 style={{ fontSize: 22, margin: 0 }}>
-          {`# ${numberSegmentId} `}
-          <span style={{ fontSize: 14, fontWeight: "normal" }}>
-            of {data.segments.length - 1} segments
-          </span>
-        </h3>
+        <Grid container alignItems="center" gap={2}>
+          {segmentId !== "0" && (
+            <Link to={`/episode/${episodeId}/segment/${numberSegmentId - 1}`}>
+              <Button
+                variant="text"
+                size="small"
+                color="info"
+                sx={{ px: 1, minWidth: 0 }}
+              >
+                <CustomIcon name="angle-left" />
+              </Button>
+            </Link>
+          )}
+          <h3 style={{ fontSize: 22, margin: 0 }}>
+            {`# ${numberSegmentId} `}
+            <span style={{ fontSize: 14, fontWeight: "normal" }}>
+              of {data.segments.length - 1} segments
+            </span>
+          </h3>
+        </Grid>
 
         <span>
           Timestamp: {segment.start} ~ {segment.end}
         </span>
+        <span
+          style={{ backgroundColor: "rgba(0,0,0,0.1)", padding: "8px 8px" }}
+        >
+          {segment.text}
+        </span>
       </Box>
-      <span style={{ backgroundColor: "rgba(0,0,0,0.1)", padding: "8px 8px" }}>
-        {segment.text}
-      </span>
 
       <DecisionForm
         defaultSpeaker={

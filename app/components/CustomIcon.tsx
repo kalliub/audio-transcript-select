@@ -32,7 +32,7 @@ export interface IIconProps {
   customSvg?: ImgHTMLAttributes<HTMLOrSVGImageElement>;
 }
 
-const Icon = ({
+const CustomIcon = ({
   size = "regular",
   type = "line",
   name,
@@ -89,4 +89,4 @@ const Icon = ({
   );
 };
 
-export default Icon;
+export default CustomIcon;
