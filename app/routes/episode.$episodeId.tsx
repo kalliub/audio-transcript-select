@@ -1,5 +1,5 @@
 import { Button, Grid, Tooltip } from "@mui/material";
-import { LoaderFunction, json } from "@remix-run/node";
+import { LoaderFunctionArgs, json } from "@remix-run/node";
 import {
   Link,
   Outlet,
@@ -10,16 +10,20 @@ import {
 } from "@remix-run/react";
 import CustomIcon from "~/components/CustomIcon";
 
-export const loader: LoaderFunction = async ({ params }) => {
+export const loader = async ({ params }: LoaderFunctionArgs) => {
   try {
     const { episodeId } = params;
 
-    const jsonFile = await fetch(
+    const jsonFile = (await fetch(
       `${ENV.ASSETS_URL}/data/${episodeId}/data.json`,
-    ).then((res) => res.json());
+    ).then((res) => res.json())) as Segment[];
+
+    console.log(jsonFile[22]);
 
     return json(jsonFile, {
-      headers: { "Cache-Control": "public, max-age=3600" },
+      headers: {
+        "Cache-Control": "public, max-age=3600",
+      },
     });
   } catch {
     throw new Error("Episode file not found");
@@ -30,7 +34,7 @@ export const shouldRevalidate: ShouldRevalidateFunction = () => false;
 
 const Episode = () => {
   const { episodeId } = useParams();
-  const segments = useLoaderData<Segment[]>();
+  const segments = useLoaderData<typeof loader>();
   const downloadFetcher = useFetcher();
 
   return (

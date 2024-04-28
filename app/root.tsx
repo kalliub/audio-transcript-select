@@ -10,7 +10,12 @@ import { ReactNode, useContext, useEffect } from "react";
 import ClientStyleContext from "./styles/ClientStyleContext";
 import ServerStyleContext from "./styles/server.context";
 import { withEmotionCache } from "@emotion/react";
-import { LinksFunction, LoaderFunction, json } from "@remix-run/node";
+import {
+  LinksFunction,
+  LoaderFunction,
+  MetaFunction,
+  json,
+} from "@remix-run/node";
 import { publicEnvVars } from "./config/env.server";
 import pick from "lodash.pick";
 
@@ -27,6 +32,12 @@ export const links: LinksFunction = () => [
   {
     rel: "stylesheet",
     href: "https://unicons.iconscout.com/release/v3.0.0/css/line.css",
+  },
+];
+
+export const meta: MetaFunction = () => [
+  {
+    charSet: "utf-8",
   },
 ];
 
