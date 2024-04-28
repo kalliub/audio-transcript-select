@@ -18,8 +18,6 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
       `${ENV.ASSETS_URL}/data/${episodeId}/data.json`,
     ).then((res) => res.json())) as Segment[];
 
-    console.log(jsonFile[22]);
-
     return json(jsonFile, {
       headers: {
         "Cache-Control": "public, max-age=3600",
