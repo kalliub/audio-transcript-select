@@ -5,6 +5,7 @@ import {
   Scripts,
   ScrollRestoration,
   ShouldRevalidateFunction,
+  useLoaderData,
 } from "@remix-run/react";
 import { ReactNode, useContext, useEffect } from "react";
 import ClientStyleContext from "./styles/ClientStyleContext";
@@ -49,6 +50,7 @@ const Document = withEmotionCache(
   ({ children }: DocumentProps, emotionCache) => {
     const clientStyleData = useContext(ClientStyleContext);
     const serverStyleData = useContext(ServerStyleContext);
+    const publicEnvs = useLoaderData<typeof loader>();
 
     // Only executed on client
     useEffect(() => {
@@ -92,7 +94,7 @@ const Document = withEmotionCache(
           <script
             // eslint-disable-next-line react/no-danger
             dangerouslySetInnerHTML={{
-              __html: `window.ENV = ${JSON.stringify(ENV)}`,
+              __html: `window.ENV = ${JSON.stringify(publicEnvs)}`,
             }}
           />
           <ScrollRestoration />
