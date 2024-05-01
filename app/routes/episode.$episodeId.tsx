@@ -8,19 +8,23 @@ import {
   useLoaderData,
   useParams,
 } from "@remix-run/react";
+import fs from "fs/promises";
 import CustomIcon from "~/components/CustomIcon";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   try {
     const { episodeId } = params;
 
-    const jsonFile = (await fetch(
-      `${ENV.ASSETS_URL}/data/${episodeId}/data.json`,
-    ).then((res) => res.json())) as Segment[];
+    const jsonFileBuffer = await fs.readFile(
+      `${process.cwd()}/app/data/${episodeId}/data.json`,
+    );
 
-    return json(jsonFile, {
+    const parsedJsonFile = JSON.parse(jsonFileBuffer.toString());
+
+    return json(parsedJsonFile, {
       headers: {
         "Cache-Control": "public, max-age=3600",
+        "Content-Type": "application/json",
       },
     });
   } catch {

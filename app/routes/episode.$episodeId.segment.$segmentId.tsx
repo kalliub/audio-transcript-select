@@ -1,4 +1,4 @@
-import { Box, Button, Grid } from "@mui/material";
+import { Alert, Box, Button, Grid } from "@mui/material";
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
@@ -12,12 +12,12 @@ import {
   useOutletContext,
   useParams,
 } from "@remix-run/react";
-import { useEffect } from "react";
 import { DecisionService } from "~/api/DecisionService";
 import DecisionForm from "~/components/DecisionForm";
 import { extractSpeakersArrayFromString } from "~/utils/formatters";
 import { getJSONActionData } from "~/utils/remix";
 import CustomIcon from "~/components/CustomIcon";
+import { useState } from "react";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const { episodeId = "", segmentId = "" } = params;
@@ -52,43 +52,14 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   }
 };
 
-const audioPool: HTMLAudioElement[] = [];
-
 const SegmentRoute = () => {
   const navigate = useNavigate();
+  const [audioError, setAudioError] = useState<string | null>(null);
   const decisionFromDatabase = useLoaderData<typeof loader>();
   const data = useOutletContext<{ segments: Segment[] }>();
   const { segmentId = "0", episodeId = "" } = useParams();
   const numberSegmentId = Number(segmentId);
   const segment = data?.segments[numberSegmentId];
-
-  useEffect(() => {
-    if (!segment) return;
-    function playAudio(url: string) {
-      // Stop all playing audios first
-      audioPool.forEach((audio) => {
-        if (!audio.paused) {
-          audio.pause();
-          audio.currentTime = 0;
-        }
-      });
-
-      // Find or create an Audio object for the new URL
-      let audio = audioPool.find((a) => a.src === url);
-      if (!audio) {
-        audio = new Audio(url);
-        audioPool.push(audio);
-      }
-
-      audio.play();
-    }
-
-    playAudio(
-      `${ENV.ASSETS_URL}/data/${episodeId}/fragments/${segment.start}_${segment.end}.mp3`,
-    );
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [segmentId]);
 
   if (!segment) {
     return (
@@ -131,6 +102,19 @@ const SegmentRoute = () => {
             </span>
           </h3>
         </Grid>
+
+        {audioError && <Alert severity="error">{audioError}</Alert>}
+        <audio
+          controls
+          src={`/audios/${episodeId}?start=${segment.start}&end=${segment.end}`}
+          autoPlay
+          onError={() => setAudioError("Error while loading audio")}
+          onLoadedData={() => setAudioError(null)}
+        >
+          <track kind="captions" />
+          Your browser does not support the
+          <code>audio</code> element.
+        </audio>
 
         <span>
           Timestamp: {segment.start} ~ {segment.end}
