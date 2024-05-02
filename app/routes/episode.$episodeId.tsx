@@ -1,25 +1,25 @@
 import { Button, Grid, Tooltip } from "@mui/material";
-import { LoaderFunctionArgs, json } from "@remix-run/node";
+import { LoaderFunctionArgs, json, redirect } from "@remix-run/node";
 import {
   Link,
   Outlet,
   ShouldRevalidateFunction,
   useFetcher,
   useLoaderData,
+  useLocation,
   useParams,
 } from "@remix-run/react";
-import fs from "fs/promises";
 import CustomIcon from "~/components/CustomIcon";
+import { getJsonEpisodeFile } from "~/utils/jsonFile";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   try {
-    const { episodeId } = params;
+    const { episodeId = "", segmentId = "" } = params;
+    if (segmentId.length === 0) {
+      return redirect(`/episode/${params.episodeId}/check`);
+    }
 
-    const jsonFileBuffer = await fs.readFile(
-      `${process.cwd()}${ENV.EPISODES_FILES_PATH}/${episodeId}/data.json`,
-    );
-
-    const parsedJsonFile = JSON.parse(jsonFileBuffer.toString());
+    const parsedJsonFile = getJsonEpisodeFile(episodeId);
 
     return json(parsedJsonFile, {
       headers: {
@@ -35,6 +35,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 export const shouldRevalidate: ShouldRevalidateFunction = () => false;
 
 const Episode = () => {
+  const location = useLocation();
   const { episodeId } = useParams();
   const segments = useLoaderData<typeof loader>();
   const downloadFetcher = useFetcher();
@@ -49,7 +50,7 @@ const Episode = () => {
         </Link>
         <h1>Episode {episodeId}</h1>
         <Tooltip
-          title="Download JSON with all submitted speakers"
+          title="Download JSON file with all speakers from this episode on the database"
           placement="right"
           arrow
         >
@@ -74,6 +75,12 @@ const Episode = () => {
             </Button>
           </Link>
         </Tooltip>
+
+        {!location.pathname.includes("/check") && (
+          <Link to={`/episode/${episodeId}/check`}>
+            <Button variant="outlined">Check Episode</Button>
+          </Link>
+        )}
       </Grid>
 
       <Grid container flexDirection={"column"} gap={2}>

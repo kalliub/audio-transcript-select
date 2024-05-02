@@ -35,7 +35,7 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
 
   switch (request.method) {
     case "POST": {
-      const { speakers } = await getJSONActionData(request);
+      const { speakers, isLastSegment } = await getJSONActionData(request);
       const parsedSpeakers = String(speakers)
         .split(",")
         .filter((s) => s && s.length > 0);
@@ -45,6 +45,10 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
         segmentId,
         speakers: parsedSpeakers,
       });
+
+      if (isLastSegment) {
+        return redirect(`/episode/${episodeId}/check`);
+      }
       return redirect(`/episode/${episodeId}/segment/${Number(segmentId) + 1}`);
     }
     default:
@@ -60,6 +64,8 @@ const SegmentRoute = () => {
   const { segmentId = "0", episodeId = "" } = useParams();
   const numberSegmentId = Number(segmentId);
   const segment = data?.segments[numberSegmentId];
+  const isLastSegment =
+    segment.id === data.segments[data.segments.length - 1].id;
 
   if (!segment) {
     return (
@@ -127,6 +133,7 @@ const SegmentRoute = () => {
       </Box>
 
       <DecisionForm
+        {...{ isLastSegment }}
         defaultSpeaker={
           decisionFromDatabase?.speakers ||
           extractSpeakersArrayFromString(segment.speakers)

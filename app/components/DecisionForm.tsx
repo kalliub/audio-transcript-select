@@ -5,9 +5,13 @@ import { cleanSpeakersString } from "~/utils/formatters";
 
 interface DefaultFormProps {
   defaultSpeaker?: string[];
+  isLastSegment?: boolean;
 }
 
-const DecisionForm = ({ defaultSpeaker = [] }: DefaultFormProps) => {
+const DecisionForm = ({
+  defaultSpeaker = [],
+  isLastSegment,
+}: DefaultFormProps) => {
   const textFieldRef = useRef<HTMLInputElement>(null);
   const decisionFetcher = useFetcher();
   const isLoading = decisionFetcher.state !== "idle";
@@ -28,6 +32,7 @@ const DecisionForm = ({ defaultSpeaker = [] }: DefaultFormProps) => {
     decisionFetcher.submit(
       {
         speakers: speakers || "",
+        isLastSegment: JSON.stringify(isLastSegment),
       },
       {
         method: "POST",
