@@ -85,7 +85,7 @@ const SegmentRoute = () => {
         alignItems="flex-start"
         flexDirection="column"
         gap={1}
-        border={`1px solid rgba(0,0,0,0.2)`}
+        border={`1px solid lightgray`}
         p={2}
       >
         <Grid container alignItems="center" gap={2}>
@@ -125,9 +125,7 @@ const SegmentRoute = () => {
         <span>
           Timestamp: {segment.start} ~ {segment.end}
         </span>
-        <span
-          style={{ backgroundColor: "rgba(0,0,0,0.1)", padding: "8px 8px" }}
-        >
+        <span style={{ backgroundColor: "whitesmoke", padding: "8px 8px" }}>
           {segment.text}
         </span>
       </Box>

@@ -86,9 +86,7 @@ const DecisionForm = ({
         </Button>
       </Grid>
 
-      <span
-        style={{ color: "rgba(0,0,0,0.5)", fontSize: "12px", marginLeft: 4 }}
-      >
+      <span style={{ color: "gray", fontSize: "12px", marginLeft: 4 }}>
         Only numbers and commas are accepted
       </span>
     </Grid>
