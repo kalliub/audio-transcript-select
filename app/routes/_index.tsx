@@ -51,9 +51,11 @@ const Index = () => {
 
       <Grid container alignItems="center" gap={2}>
         <TextField
+          label="Episode Number"
           size="small"
           placeholder="Go to episode..."
           type="number"
+          defaultValue={1}
           inputProps={{ min: 1 }}
           onChange={(e) => setGoto(Number(e.target.value ?? 1))}
           error={goto < 1 || goto > 200}

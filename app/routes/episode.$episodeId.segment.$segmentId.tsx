@@ -60,12 +60,12 @@ const SegmentRoute = () => {
   const navigate = useNavigate();
   const [audioError, setAudioError] = useState<string | null>(null);
   const decisionFromDatabase = useLoaderData<typeof loader>();
-  const data = useOutletContext<{ segments: Segment[] }>();
+  const jsonData = useOutletContext<{ segments: Segment[] }>();
   const { segmentId = "0", episodeId = "" } = useParams();
   const numberSegmentId = Number(segmentId);
-  const segment = data?.segments[numberSegmentId];
+  const segment = jsonData?.segments[numberSegmentId];
   const isLastSegment =
-    segment.id === data.segments[data.segments.length - 1].id;
+    segment.id === jsonData.segments[jsonData.segments.length - 1].id;
 
   if (!segment) {
     return (
@@ -104,9 +104,11 @@ const SegmentRoute = () => {
           <h3 style={{ fontSize: 22, margin: 0 }}>
             {`# ${numberSegmentId} `}
             <span style={{ fontSize: 14, fontWeight: "normal" }}>
-              of {data.segments.length - 1} segments
+              of {jsonData.segments.length - 1} segments
             </span>
           </h3>
+
+          <CustomIcon name="check-circle" style={{ color: "green" }} />
         </Grid>
 
         {audioError && <Alert severity="error">{audioError}</Alert>}

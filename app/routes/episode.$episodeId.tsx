@@ -1,5 +1,5 @@
 import { Button, Grid, Tooltip } from "@mui/material";
-import { LoaderFunctionArgs, json, redirect } from "@remix-run/node";
+import { LoaderFunctionArgs, json } from "@remix-run/node";
 import {
   Link,
   Outlet,
@@ -7,38 +7,40 @@ import {
   useFetcher,
   useLoaderData,
   useLocation,
+  useNavigate,
   useParams,
 } from "@remix-run/react";
+import { useEffect } from "react";
 import CustomIcon from "~/components/CustomIcon";
 import { getJsonEpisodeFile } from "~/utils/jsonFile";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
-  try {
-    const { episodeId = "", segmentId = "" } = params;
-    if (segmentId.length === 0) {
-      return redirect(`/episode/${params.episodeId}/check`);
-    }
+  const { episodeId = "" } = params;
 
-    const parsedJsonFile = getJsonEpisodeFile(episodeId);
+  const parsedJsonFile = await getJsonEpisodeFile(episodeId);
 
-    return json(parsedJsonFile, {
-      headers: {
-        "Cache-Control": "public, max-age=3600",
-        "Content-Type": "application/json",
-      },
-    });
-  } catch {
-    throw new Error("Episode file not found");
-  }
+  return json(parsedJsonFile, {
+    headers: {
+      "Cache-Control": "public, max-age=3600",
+      "Content-Type": "application/json",
+    },
+  });
 };
 
 export const shouldRevalidate: ShouldRevalidateFunction = () => false;
 
 const Episode = () => {
   const location = useLocation();
-  const { episodeId } = useParams();
+  const navigate = useNavigate();
+  const { episodeId, segmentId = "" } = useParams();
   const segments = useLoaderData<typeof loader>();
   const downloadFetcher = useFetcher();
+
+  useEffect(() => {
+    if (segmentId.length === 0) {
+      navigate("segment/0");
+    }
+  }, [segmentId, navigate]);
 
   return (
     <Grid container flexDirection="column">
