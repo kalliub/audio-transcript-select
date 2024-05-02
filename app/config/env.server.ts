@@ -2,6 +2,14 @@ import { z } from "zod";
 
 const schema = z.object({
   MONGO_DB_URL: z.string(),
+  EPISODES_FILES_PATH: z
+    .string()
+    .regex(
+      /^\/.*[^/]$/,
+      "Should start with a slash, but not end with a slash. Format example: `/app/data`",
+    )
+    .optional()
+    .default("/app/data"),
 });
 
 type ENV = z.infer<typeof schema>;

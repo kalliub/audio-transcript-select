@@ -16,7 +16,7 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
     const { episodeId } = params;
 
     const jsonFileBuffer = await fs.readFile(
-      `${process.cwd()}/app/data/${episodeId}/data.json`,
+      `${process.cwd()}${ENV.EPISODES_FILES_PATH}/${episodeId}/data.json`,
     );
 
     const parsedJsonFile = JSON.parse(jsonFileBuffer.toString());

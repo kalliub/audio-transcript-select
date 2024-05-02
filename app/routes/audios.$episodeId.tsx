@@ -14,7 +14,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
 
   const audioPath =
     process.cwd() +
-    `/app/data/${episodeId}/fragments/${startTimestamp}_${endTimestamp}.mp3`;
+    `${ENV.EPISODES_FILES_PATH}/${episodeId}/fragments/${startTimestamp}_${endTimestamp}.mp3`;
 
   try {
     const audioBuffer = await fs.readFile(audioPath);
