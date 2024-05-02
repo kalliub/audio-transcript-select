@@ -32,15 +32,15 @@ export const shouldRevalidate: ShouldRevalidateFunction = () => false;
 const Episode = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { episodeId, segmentId = "" } = useParams();
+  const { episodeId } = useParams();
   const segments = useLoaderData<typeof loader>();
   const downloadFetcher = useFetcher();
 
   useEffect(() => {
-    if (segmentId.length === 0) {
+    if (RegExp(`^/episode/${episodeId}/?$`).test(location.pathname)) {
       navigate("segment/0");
     }
-  }, [segmentId, navigate]);
+  }, [episodeId, location, navigate]);
 
   return (
     <Grid container flexDirection="column">
