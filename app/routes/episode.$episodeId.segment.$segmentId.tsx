@@ -1,4 +1,4 @@
-import { Alert, Box, Button, Grid } from "@mui/material";
+import { Alert, Box, Button, Grid, Tooltip } from "@mui/material";
 import {
   ActionFunctionArgs,
   LoaderFunctionArgs,
@@ -108,7 +108,27 @@ const SegmentRoute = () => {
             </span>
           </h3>
 
-          <CustomIcon name="check-circle" style={{ color: "green" }} />
+          {decisionFromDatabase ? (
+            <Tooltip
+              title="This segment is on the database!"
+              arrow
+              placement="right"
+            >
+              <div>
+                <CustomIcon name="check-circle" style={{ color: "green" }} />
+              </div>
+            </Tooltip>
+          ) : (
+            <Tooltip
+              title="This segment IS NOT on the database!"
+              arrow
+              placement="right"
+            >
+              <div>
+                <CustomIcon name="times-circle" style={{ color: "red" }} />
+              </div>
+            </Tooltip>
+          )}
         </Grid>
 
         {audioError && <Alert severity="error">{audioError}</Alert>}
