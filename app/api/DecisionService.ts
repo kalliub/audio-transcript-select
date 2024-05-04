@@ -1,6 +1,6 @@
-import { ApiService } from "./ApiService";
+import { ApiConfig } from "./ApiConfig";
 
-export class DecisionService extends ApiService {
+export class DecisionService extends ApiConfig {
   public async getDecisionsGroupedByEpisode() {
     try {
       const decisionRecords = await this.prisma.decision.findMany({
