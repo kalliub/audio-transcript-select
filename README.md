@@ -9,8 +9,11 @@
     - [Technologies used](#technologies-used)
       - [Why these technologies?](#why-these-technologies)
   - [Requirements](#requirements)
+  - [How to Run (with Docker)](#how-to-run-with-docker)
   - [How to Run](#how-to-run)
+  - [Additional information](#additional-information)
     - [Episode data files](#episode-data-files)
+    - [MongoDB Atlas](#mongodb-atlas)
 
 ## About the project
 
@@ -28,6 +31,7 @@ The project was built using the following technologies:
 - [Prisma](https://www.prisma.io)
 - [MUI (Material-UI)](https://mui.com/material-ui/)
 - [TypeScript](https://www.typescriptlang.org) (+ [ESLint](https://eslint.org) and [Prettier](https://prettier.io))
+- Docker
 
 #### Why these technologies?
 
@@ -43,7 +47,16 @@ Finally, **Typescript**, along with Remix is a natural choice for me, considerin
 
 - Node.js (18+)
 - npm
-- MongoDB database connection url. You can get a cloud instance for free using [MongoDB Atlas](https://atlas.mongodb.com).
+- MongoDB database connection url. You can use [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) to create a free instance.
+- Docker (optional)
+
+## How to Run (with Docker)
+
+1. Clone the repository
+2. Configure the `.env` file according to the `.env.example`
+3. Build the Docker image: `docker build -t audio-transcription-selector .`
+4. Run the Docker container: `docker run -p 3000:3000 audio-transcription-selector`
+5. Access the application on `http://localhost:3000` through your browser.
 
 ## How to Run
 
@@ -61,6 +74,8 @@ Finally, **Typescript**, along with Remix is a natural choice for me, considerin
 
 7. Access the application on `http://localhost:3000` through your browser.
 
+## Additional information
+
 ### Episode data files
 
 The data JSON should be named `data.json` and the audio folder `fragments/`, with the audio files named as `<timestamp-start>_<timestamp-end>.mp3`, just like the `data.json` file.
@@ -73,3 +88,7 @@ app/data/1/fragments/0_10.mp3
 ```
 
 As a sample directory, I have changed `EPISODES_FILE_PATH` to `app/episodes` in the `.env` file.
+
+### MongoDB Atlas
+
+I really recommend you to create a free instance on [MongoDB Atlas](https://atlas.mongodb.com) to use as your database. After creating the instance, you can get the connection string on the "Connect" tab of your cluster. Seems like using Prisma with Docker is a little bit tricky, so the best way is to use a hosted instance.
