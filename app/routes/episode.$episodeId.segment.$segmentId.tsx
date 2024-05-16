@@ -144,7 +144,7 @@ const SegmentRoute = () => {
           <code>audio</code> element.
         </audio>
 
-        <span>
+        <span id="segment-timestamp">
           Timestamp: {segment.start} ~ {segment.end}
         </span>
         <span

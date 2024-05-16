@@ -5,12 +5,19 @@ describe("Episode Page", () => {
   });
 
   it("Renders page", () => {
-    cy.get("h1").contains("Episode 1");
-    cy.get("h3").contains(/# \d+ of \d+ segments/);
-    cy.get("audio").should("exist");
-    cy.get("span").contains(/Timestamp: \d+ ~ \d+/);
-    cy.get("#segment-text").should("exist");
-    cy.get("#speakers-input").should("exist");
+    cy.fixture("episodeData").then((episodeData) => {
+      cy.get("h1").should("have.text", "Episode 1");
+      cy.get("h3").contains(
+        new RegExp(String.raw`# ${episodeData[0].id} of \d+ segments`),
+      );
+      cy.get("audio").should("exist");
+      cy.get("#segment-timestamp").should(
+        "have.text",
+        `Timestamp: ${episodeData[0].start} ~ ${episodeData[0].end}`,
+      );
+      cy.get("#speakers-input").should("exist");
+      cy.get("#segment-text").should("have.text", episodeData[0].text);
+    });
   });
 
   it("Inputs speakers", () => {
@@ -48,5 +55,13 @@ describe("Episode Page", () => {
         expect(audio.currentTime).to.be.greaterThan(1);
       });
     });
+  });
+
+  it("Check episode button", () => {
+    const button = cy.get("button#check-episode");
+    button.should("be.visible");
+    button.should("have.text", "Check Episode");
+    button.click();
+    cy.url().should("contain", "/episode/1/check");
   });
 });

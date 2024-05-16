@@ -80,7 +80,9 @@ const Episode = () => {
 
         {!location.pathname.includes("/check") && (
           <Link to={`/episode/${episodeId}/check`}>
-            <Button variant="outlined">Check Episode</Button>
+            <Button variant="outlined" id="check-episode">
+              Check Episode
+            </Button>
           </Link>
         )}
       </Grid>

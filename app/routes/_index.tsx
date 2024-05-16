@@ -57,7 +57,8 @@ const Index = () => {
           placeholder="Go to episode..."
           type="number"
           defaultValue={1}
-          inputProps={{ min: 1, id: "episode-number" }}
+          inputProps={{ min: 1 }}
+          id="episode-number"
           onChange={(e) => setGoto(Number(e.target.value ?? 1))}
           error={goto < 1 || goto > 200}
           onKeyDown={(e) => {
