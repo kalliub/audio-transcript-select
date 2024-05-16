@@ -147,7 +147,10 @@ const SegmentRoute = () => {
         <span>
           Timestamp: {segment.start} ~ {segment.end}
         </span>
-        <span style={{ backgroundColor: "whitesmoke", padding: "8px 8px" }}>
+        <span
+          id="segment-text"
+          style={{ backgroundColor: "whitesmoke", padding: "8px 8px" }}
+        >
           {segment.text}
         </span>
       </Box>

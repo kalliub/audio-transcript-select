@@ -49,6 +49,7 @@ const DecisionForm = ({
           inputProps={{
             min: 0,
             autoFocus: true,
+            id: "speakers-input",
           }}
           // eslint-disable-next-line jsx-a11y/no-autofocus
           autoFocus
@@ -72,6 +73,7 @@ const DecisionForm = ({
         />
 
         <Button
+          id="submit-speakers"
           variant="contained"
           disabled={isLoading || speakers.length === 0}
           onClick={handleSubmit}

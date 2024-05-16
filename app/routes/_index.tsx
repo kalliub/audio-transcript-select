@@ -32,6 +32,7 @@ const Index = () => {
             reloadDocument
           >
             <Button
+              id="download-episodes"
               variant="text"
               onClick={() => {
                 downloadEverythingFetcher.submit(
@@ -56,7 +57,7 @@ const Index = () => {
           placeholder="Go to episode..."
           type="number"
           defaultValue={1}
-          inputProps={{ min: 1 }}
+          inputProps={{ min: 1, id: "episode-number" }}
           onChange={(e) => setGoto(Number(e.target.value ?? 1))}
           error={goto < 1 || goto > 200}
           onKeyDown={(e) => {
@@ -68,7 +69,11 @@ const Index = () => {
           }}
         />
         <Link to={startEpisodeLink}>
-          <Button variant="contained" disabled={goto < 1 || goto > 200}>
+          <Button
+            variant="contained"
+            id="goto-episode"
+            disabled={goto < 1 || goto > 200}
+          >
             <CustomIcon name="angle-right" />
           </Button>
         </Link>
