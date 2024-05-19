@@ -18,11 +18,13 @@ module.exports = {
     browser: true,
     commonjs: true,
     es6: true,
+    "cypress/globals": true
   },
   ignorePatterns: ["!**/.server", "!**/.client"],
 
   // Base config
-  extends: ["eslint:recommended"],
+  extends: ["eslint:recommended", "plugin:cypress/recommended"],
+  plugins: ["cypress"],
 
   overrides: [
     // React

@@ -1,7 +1,9 @@
 import { z } from "zod";
 
 const schema = z.object({
-  MONGO_DB_URL: z.string(),
+  MONGO_DB_URL: z
+    .string()
+    .regex(/^mongodb\+srv:\/\/.*$/, "Should start with `mongodb+srv://`"),
   EPISODES_FILES_PATH: z
     .string()
     .regex(
@@ -10,6 +12,11 @@ const schema = z.object({
     )
     .optional()
     .default("/app/data"),
+  USE_TEST_DB: z
+    .string()
+    .regex(/^(true|false)$/)
+    .optional()
+    .default("false"),
 });
 
 type ENV = z.infer<typeof schema>;

@@ -1,6 +1,8 @@
 describe("Episode Page", () => {
   beforeEach(() => {
+    cy.task("db:Decision:drop");
     cy.visit("/episode/1/segment/0");
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(50);
   });
 
@@ -21,7 +23,9 @@ describe("Episode Page", () => {
   });
 
   it("Inputs speakers", () => {
-    cy.get("#speakers-input").clear().type("1,2,3");
+    cy.get("#speakers-input").as("speakers-input");
+    cy.get("#speakers-input").clear();
+    cy.get("#speakers-input").type("1,2,3");
     cy.get("#speakers-input").should("have.value", "1,2,3");
   });
 
@@ -38,7 +42,10 @@ describe("Episode Page", () => {
       },
     }).as("next-episode-redirect");
 
-    cy.get("#speakers-input").clear().type("1,2,3");
+    cy.get("#speakers-input").as("speakers-input");
+    cy.get("@speakers-input").clear();
+    cy.get("@speakers-input").type("1,2,3");
+
     cy.get("#submit-speakers").click();
     cy.wait("@submit-speakers");
     cy.wait("@next-episode-redirect");
@@ -51,6 +58,7 @@ describe("Episode Page", () => {
   it("Continues to play the audio track", () => {
     cy.get("audio").then(($audio) => {
       const audio = $audio.get(0);
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(1500).then(() => {
         expect(audio.currentTime).to.be.greaterThan(1);
       });
@@ -58,10 +66,10 @@ describe("Episode Page", () => {
   });
 
   it("Check episode button", () => {
-    const button = cy.get("button#check-episode");
-    button.should("be.visible");
-    button.should("have.text", "Check Episode");
-    button.click();
+    cy.get("button#check-episode").as("check-episode-button");
+    cy.get("@check-episode-button").should("be.visible");
+    cy.get("@check-episode-button").should("have.text", "Check Episode");
+    cy.get("@check-episode-button").click();
     cy.url().should("contain", "/episode/1/check");
   });
 });

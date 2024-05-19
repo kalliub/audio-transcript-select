@@ -1,6 +1,9 @@
+// TODO: Fix best practices
 describe("First Page", () => {
   beforeEach(() => {
+    cy.task("db:Decision:drop");
     cy.visit("/");
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(50);
   });
 
@@ -9,10 +12,19 @@ describe("First Page", () => {
   });
 
   it("Input the episode number", () => {
-    cy.get("#episode-number").clear().type("2");
+    cy.get("#episode-number").clear();
+    cy.get("#episode-number").type("2");
   });
 
   it("Downloads all Episodes data", () => {
+    cy.task("db:Decision", {
+      operation: "create",
+      decision: {
+        episode_id: 1,
+        segment_id: 0,
+        speakers: ["1", "2", "3"],
+      },
+    });
     cy.intercept({
       method: "GET",
       pathname: "/episodes/download",
@@ -24,11 +36,10 @@ describe("First Page", () => {
     cy.get("#download-episodes").click();
     cy.wait("@download-episodes-button");
 
-    const downloadedFile = cy
-      .readFile("cypress/downloads/all-segments.json", "utf8")
-      .should("exist");
-
-    downloadedFile.its("1").should("be.an", "array");
+    cy.readFile("cypress/downloads/all-segments.json", "utf8")
+      .should("exist")
+      .its("1")
+      .should("be.an", "array");
   });
 
   it("Shows tooltip on download button", () => {
@@ -40,14 +51,16 @@ describe("First Page", () => {
   });
 
   it("Blocks to input letters", () => {
-    const episodeNumberInput = cy.get("#episode-number");
-    episodeNumberInput.should("have.attr", "type", "number");
-    episodeNumberInput.clear().type("a").should("have.value", "");
+    cy.get("#episode-number").should("have.attr", "type", "number");
+    cy.get("#episode-number").clear();
+    cy.get("#episode-number").type("a");
+    cy.get("#episode-number").should("have.value", "");
   });
 
   it("Disables > Button if episode number is empty", () => {
-    const episodeNumberInput = cy.get("#episode-number");
-    episodeNumberInput.clear().should("be.empty");
+    cy.get("#episode-number").clear();
+    cy.get("#episode-number").should("be.empty");
+
     cy.get("fieldset[aria-hidden=true]").should(
       "have.css",
       "border-color",
@@ -77,7 +90,10 @@ describe("First Page", () => {
       },
     }).as("get-inexistent-episode");
 
-    cy.get("#episode-number").clear().type("2");
+    cy.get("#episode-number").as("episode-input");
+    cy.get("@episode-input").clear();
+    cy.get("@episode-input").type("2");
+
     cy.get("#goto-episode").click();
     cy.wait("@get-inexistent-episode").then((interception) => {
       expect(interception.response?.statusCode).equal(500);

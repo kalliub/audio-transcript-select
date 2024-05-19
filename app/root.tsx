@@ -7,7 +7,7 @@ import {
   ShouldRevalidateFunction,
   useLoaderData,
 } from "@remix-run/react";
-import { ReactNode, useContext, useEffect } from "react";
+import { ReactNode, useContext, useEffect, useRef } from "react";
 import ClientStyleContext from "./styles/ClientStyleContext";
 import ServerStyleContext from "./styles/server.context";
 import { withEmotionCache } from "@emotion/react";
@@ -52,25 +52,31 @@ const Document = withEmotionCache(
     const serverStyleData = useContext(ServerStyleContext);
     const publicEnvs = useLoaderData<typeof loader>();
 
-    // Only executed on client
-    useEffect(() => {
-      // re-link sheet container
+    const reinjectStylesRef = useRef(true);
 
-      // eslint-disable-next-line no-param-reassign
+    // Only executed on client
+    // When a top level ErrorBoundary or CatchBoundary are rendered,
+    // the document head gets removed, so we have to create the style tags
+    useEffect(() => {
+      if (!reinjectStylesRef.current) {
+        return;
+      }
+      // re-link sheet container
       emotionCache.sheet.container = document.head;
 
       // re-inject tags
-      const { tags } = emotionCache.sheet;
+      const tags = emotionCache.sheet.tags;
       emotionCache.sheet.flush();
       tags.forEach((tag) => {
-        // eslint-disable-next-line no-underscore-dangle, @typescript-eslint/no-explicit-any
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (emotionCache.sheet as any)._insertTag(tag);
       });
 
       // reset cache to re-apply global styles
       clientStyleData.reset();
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+      // ensure we only do this once per mount
+      reinjectStylesRef.current = false;
+    }, [clientStyleData, emotionCache.sheet]);
 
     return (
       <html lang="pt">
@@ -97,6 +103,7 @@ const Document = withEmotionCache(
               __html: `window.ENV = ${JSON.stringify(publicEnvs)}`,
             }}
           />
+
           <ScrollRestoration />
           <Scripts />
         </body>
@@ -105,7 +112,7 @@ const Document = withEmotionCache(
   },
 );
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export function Layout({ children }: Readonly<{ children: React.ReactNode }>) {
   return <Document>{children}</Document>;
 }
 
