@@ -1,4 +1,3 @@
-// TODO: Fix best practices
 describe("First Page", () => {
   beforeEach(() => {
     cy.task("db:Decision:drop");
