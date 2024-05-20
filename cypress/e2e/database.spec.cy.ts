@@ -1,8 +1,10 @@
 import { Decision } from "@prisma/client";
+import { getFakeDecision } from "cypress/fixtures/decision.faker";
 
 describe("MongoDB and Prisma unit tests", () => {
   beforeEach(() => {
     cy.task("db:Decision:drop");
+    cy.wrap(getFakeDecision()).as("mockDecision");
   });
 
   after(() => {
@@ -14,7 +16,7 @@ describe("MongoDB and Prisma unit tests", () => {
   });
 
   it("Create a Decision on the Database", () => {
-    cy.fixture<Decision>("decision.json").then((mockDecision) => {
+    cy.get<Decision>("@mockDecision").then((mockDecision) => {
       cy.task<Decision>("db:Decision", {
         operation: "create",
         decision: mockDecision,
@@ -29,7 +31,7 @@ describe("MongoDB and Prisma unit tests", () => {
   });
 
   it("Finds a unique Decision on the Database by it's episode and segment IDs", () => {
-    cy.fixture<Decision>("decision.json").then((mockDecision) => {
+    cy.get<Decision>("@mockDecision").then((mockDecision) => {
       cy.task<Decision>("db:Decision", {
         operation: "create",
         decision: mockDecision,
@@ -50,9 +52,9 @@ describe("MongoDB and Prisma unit tests", () => {
   });
 
   it("Updates a Decision on the Database", () => {
-    const dummyTestSpeakers = ["1", "2", "3"];
+    const newDecisionSpeakers = getFakeDecision().speakers;
 
-    cy.fixture<Decision>("decision.json").then((mockDecision) => {
+    cy.get<Decision>("@mockDecision").then((mockDecision) => {
       cy.task<Decision>("db:Decision", {
         operation: "create",
         decision: mockDecision,
@@ -62,11 +64,11 @@ describe("MongoDB and Prisma unit tests", () => {
           decision: {
             episode_id: decision.episode_id,
             segment_id: decision.segment_id,
-            speakers: dummyTestSpeakers,
+            speakers: newDecisionSpeakers,
           },
         }).then((updatedDecision) => {
           expect(updatedDecision.speakers).to.include.members(
-            dummyTestSpeakers,
+            newDecisionSpeakers,
           );
         });
       });
@@ -97,7 +99,7 @@ describe("MongoDB and Prisma unit tests", () => {
 
   it("Blocks when a Decision is inserted with a duplicated segment", () => {
     cy.task("db:Decision:drop");
-    cy.fixture<Decision>("decision.json").then((mockDecision) => {
+    cy.get<Decision>("@mockDecision").then((mockDecision) => {
       cy.task<Decision>("db:Decision", {
         operation: "create",
         decision: mockDecision,
