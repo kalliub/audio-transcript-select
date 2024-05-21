@@ -49,9 +49,8 @@ describe("Episode Page", () => {
       cy.get("audio").then(($audio) => {
         const audio = $audio.get(0);
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(1500).then(() => {
-          expect(audio.currentTime).to.be.greaterThan(1);
-        });
+        cy.wait(1500);
+        expect(audio.currentTime).to.be.greaterThan(1);
       });
     });
   });
