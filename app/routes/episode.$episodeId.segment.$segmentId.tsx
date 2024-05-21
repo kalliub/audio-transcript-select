@@ -56,6 +56,28 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
   }
 };
 
+const DatabaseCheckComponent = ({ isChecked }: { isChecked: boolean }) => {
+  const data = isChecked
+    ? {
+        title: "This segment is on the database!",
+        icon: "check-circle",
+        color: "green",
+      }
+    : {
+        title: "This segment IS NOT on the database!",
+        icon: "times-circle",
+        color: "red",
+      };
+
+  return (
+    <Tooltip title={data.title} arrow placement="right">
+      <div id="database-check">
+        <CustomIcon name={data.icon} style={{ color: data.color }} />
+      </div>
+    </Tooltip>
+  );
+};
+
 const SegmentRoute = () => {
   const navigate = useNavigate();
   const [audioError, setAudioError] = useState<string | null>(null);
@@ -108,27 +130,7 @@ const SegmentRoute = () => {
             </span>
           </h3>
 
-          {decisionFromDatabase ? (
-            <Tooltip
-              title="This segment is on the database!"
-              arrow
-              placement="right"
-            >
-              <div>
-                <CustomIcon name="check-circle" style={{ color: "green" }} />
-              </div>
-            </Tooltip>
-          ) : (
-            <Tooltip
-              title="This segment IS NOT on the database!"
-              arrow
-              placement="right"
-            >
-              <div>
-                <CustomIcon name="times-circle" style={{ color: "red" }} />
-              </div>
-            </Tooltip>
-          )}
+          <DatabaseCheckComponent isChecked={Boolean(decisionFromDatabase)} />
         </Grid>
 
         {audioError && <Alert severity="error">{audioError}</Alert>}
