@@ -4,6 +4,7 @@ import { ApiConfig } from "./app/api/ApiConfig";
 import { getEnv } from "./app/config/env.server";
 
 export default defineConfig({
+  projectId: "99on42",
   env: getEnv(),
   retries: 2,
   e2e: {
