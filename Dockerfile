@@ -10,4 +10,4 @@ RUN npx prisma db push
 
 EXPOSE 3000
 
-CMD ["dotenv -e .env", "node", "./build/server/index.js"]
+CMD ["node", "./build/server/index.js"]
