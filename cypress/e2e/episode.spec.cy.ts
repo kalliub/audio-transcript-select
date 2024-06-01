@@ -49,8 +49,9 @@ describe("Episode Page", () => {
       cy.get("audio").then(($audio) => {
         const audio = $audio.get(0);
         // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(1500);
-        expect(audio.currentTime).to.be.greaterThan(1);
+        cy.wait(1500).then(() => {
+          expect(audio.currentTime).to.be.greaterThan(1);
+        });
       });
     });
   });
@@ -94,7 +95,7 @@ describe("Episode Page", () => {
     });
   });
 
-  context.only("Database or JSON data load", () => {
+  context("Database or JSON data load", () => {
     it("Shows red X when decision is not on the database", () => {
       cy.get("#database-check")
         .children()
