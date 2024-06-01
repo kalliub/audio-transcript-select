@@ -2,6 +2,8 @@ import { defineConfig } from "cypress";
 import { Decision } from "@prisma/client";
 import { ApiConfig } from "./app/api/ApiConfig";
 import { getEnv } from "./app/config/env.server";
+import * as downloadFilePlugin from "cypress-downloadfile/lib/addPlugin.js";
+const downloadFile = downloadFilePlugin.downloadFile;
 
 export default defineConfig({
   projectId: "99on42",
@@ -10,6 +12,8 @@ export default defineConfig({
   e2e: {
     setupNodeEvents(on) {
       on("task", {
+        downloadFile,
+
         "db:Decision:drop": async () => {
           const prisma = new ApiConfig().getPrisma();
           await prisma.decision.deleteMany();

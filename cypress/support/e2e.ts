@@ -13,10 +13,24 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
+declare global {
+  // eslint-disable-next-line @typescript-eslint/no-namespace
+  namespace Cypress {
+    interface Chainable {
+      downloadFile(
+        url: string,
+        folder: string,
+        filename: string,
+      ): Chainable<void>;
+    }
+  }
+}
+
 // Import commands.js using ES2015 syntax:
 import "./commands";
 import "cypress-fixture-faker";
 import "cypress-real-events";
+require("cypress-downloadfile/lib/downloadFileCommand");
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
