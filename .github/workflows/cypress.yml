@@ -44,7 +44,7 @@ jobs:
         MONGO_DB_USER: root
         MONGO_DB_PASSWORD: example
         USE_TEST_DB: true
-      run: npm start
+      run: npm start &
 
     - name: Wait for application to be ready
       run: npx wait-on http://localhost:3000
