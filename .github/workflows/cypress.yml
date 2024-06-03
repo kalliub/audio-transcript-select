@@ -29,6 +29,7 @@ jobs:
       MONGO_DB_NAME: test
       MONGO_DB_USER: root
       MONGO_DB_PASSWORD: example
+      EPISODES_FILE_PATH: /app/episodes
       USE_TEST_DB: true
 
     steps:
