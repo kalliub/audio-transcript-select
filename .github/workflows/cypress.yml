@@ -17,7 +17,7 @@ jobs:
   
 
     env:
-      MONGO_DB_URL: mongodb://localhost:27017/
+      MONGO_DB_URL: mongodb://mongo:27017/
       MONGO_DB_NAME: test
       MONGO_DB_USER: root
       MONGO_DB_PASSWORD: example
@@ -45,4 +45,5 @@ jobs:
       with:
         build: npm run build
         start: npm start
+        # wait-on: 'http://localhost:27017'
         browser: chrome
