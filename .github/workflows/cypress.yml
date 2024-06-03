@@ -38,26 +38,9 @@ jobs:
       with:
         node-version: '18'
 
-    - name: Install dependencies
-      run: npm ci
-
-    - name: Build the application
-      run: npm run build
-
-    - name: Start the application
-      env:
-        MONGO_DB_URL: mongodb://localhost:27017/
-        MONGO_DB_NAME: test
-        MONGO_DB_USER: root
-        MONGO_DB_PASSWORD: example
-        USE_TEST_DB: true
-      run: npm start &
-
-    - name: Wait for application to be ready
-      run: npx wait-on http://localhost:3000
-
     - name: Cypress run
       uses: cypress-io/github-action@v6
       with:
-        start: npm run test
+        build: npm run build
+        start: npm start
         browser: chrome
