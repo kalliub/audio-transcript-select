@@ -23,9 +23,9 @@ describe("API Integration Tests", () => {
         cy.readFile<Record<string, Omit<Decision, "id">[]>>(
           "cypress/downloads/all-segments.json",
         ).then((downloadedJson) => {
-          const databaseSegment = downloadedJson[fakeDecision.episode_id][0];
-          expect(databaseSegment.episode_id).equal(fakeDecision.episode_id);
-          expect(databaseSegment.segment_id).equal(fakeDecision.segment_id);
+          const databaseSegment = downloadedJson[fakeDecision.episodeId][0];
+          expect(databaseSegment.episodeId).equal(fakeDecision.episodeId);
+          expect(databaseSegment.segmentId).equal(fakeDecision.segmentId);
           expect(databaseSegment.speakers).to.be.members(fakeDecision.speakers);
         });
       });
@@ -39,10 +39,10 @@ describe("API Integration Tests", () => {
         decision: fakeDecision,
       });
 
-      const filename = `episode-${fakeDecision.episode_id}-segments.json`;
+      const filename = `episode-${fakeDecision.episodeId}-segments.json`;
 
       cy.downloadFile(
-        `http://localhost:3000/episode/${fakeDecision.episode_id}/download`,
+        `http://localhost:3000/episode/${fakeDecision.episodeId}/download`,
         "cypress/downloads",
         filename,
       ).then(() => {
@@ -50,8 +50,8 @@ describe("API Integration Tests", () => {
           "cypress/downloads/" + filename,
         ).then((downloadedJson) => {
           const databaseSegment = downloadedJson[0];
-          expect(databaseSegment.episode_id).equal(fakeDecision.episode_id);
-          expect(databaseSegment.segment_id).equal(fakeDecision.segment_id);
+          expect(databaseSegment.episodeId).equal(fakeDecision.episodeId);
+          expect(databaseSegment.segmentId).equal(fakeDecision.segmentId);
           expect(databaseSegment.speakers).to.be.members(fakeDecision.speakers);
         });
       });

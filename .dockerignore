@@ -5,8 +5,8 @@
 **/.vscode
 **/npm-debug.log
 **/coverage
-# **/.env
+**/.env
 **/.editorconfig
 **/.aws
 **/dist
-**/cypress/
+**/build

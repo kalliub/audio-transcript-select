@@ -1,23 +1,23 @@
 import { defineConfig } from "cypress";
-import { Decision } from "@prisma/client";
 import { ApiConfig } from "./app/api/ApiConfig";
 import { getEnv } from "./app/config/env.server";
+import Decision from "./schemas/Decision";
 import * as downloadFilePlugin from "cypress-downloadfile/lib/addPlugin.js";
 const downloadFile = downloadFilePlugin.downloadFile;
 
+new ApiConfig().initialize();
+
 export default defineConfig({
   projectId: "99on42",
-  env: getEnv(),
   retries: 2,
+  env: getEnv(),
   e2e: {
     setupNodeEvents(on) {
       on("task", {
         downloadFile,
 
         "db:Decision:drop": async () => {
-          const prisma = new ApiConfig().getPrisma();
-          await prisma.decision.deleteMany();
-          return null;
+          return Decision.deleteMany({});
         },
 
         "db:Decision": async ({
@@ -27,33 +27,29 @@ export default defineConfig({
           operation: "create" | "findUnique" | "update";
           decision: Decision;
         }) => {
-          const prisma = new ApiConfig().getPrisma();
-
           try {
             switch (operation) {
               case "create":
-                return await prisma.decision.create({ data: decision });
+                return await Decision.create(decision);
               case "findUnique":
-                return await prisma.decision.findUnique({
-                  where: {
-                    unique_decision_per_episode_segment: {
-                      episode_id: decision.episode_id,
-                      segment_id: decision.segment_id,
-                    },
-                  },
+                return await Decision.findOne({
+                  episodeId: decision.episodeId,
+                  segmentId: decision.segmentId,
                 });
               case "update":
-                return await prisma.decision.update({
-                  where: {
-                    unique_decision_per_episode_segment: {
-                      episode_id: decision.episode_id,
-                      segment_id: decision.segment_id,
-                    },
+                return await Decision.findOneAndUpdate(
+                  {
+                    episodeId: decision.episodeId,
+                    segmentId: decision.segmentId,
                   },
-                  data: {
+                  {
                     speakers: decision.speakers,
                   },
-                });
+                  {
+                    new: true,
+                  },
+                ).exec();
+
               default:
                 return null;
             }

@@ -7,16 +7,15 @@ import { getJsonEpisodeFile } from "~/utils/jsonFile";
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const { episodeId = "" } = params;
 
-  const decisionService = new DecisionService();
   const everyEpisodeDecision =
-    await decisionService.getDecisionsByEpisode(episodeId);
+    await DecisionService.getDecisionsByEpisode(episodeId);
 
   const episodeJson = await getJsonEpisodeFile(episodeId);
 
   const missingEpisodesOnDatabase: number[] = [];
   episodeJson.forEach((jsonSegment) => {
     const isSegmentOnDatabase = everyEpisodeDecision.some(
-      (decision) => decision.segment_id === jsonSegment.id,
+      (decision) => decision.segmentId === jsonSegment.id,
     );
 
     if (!isSegmentOnDatabase) {

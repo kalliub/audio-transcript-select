@@ -41,9 +41,9 @@ describe("First Page", () => {
         "cypress/downloads/all-segments.json",
         "utf8",
       ).then((downloadedJson) => {
-        const databaseSegment = downloadedJson[fakeDecision.episode_id][0];
-        expect(databaseSegment.episode_id).equal(fakeDecision.episode_id);
-        expect(databaseSegment.segment_id).equal(fakeDecision.segment_id);
+        const databaseSegment = downloadedJson[fakeDecision.episodeId][0];
+        expect(databaseSegment.episodeId).equal(fakeDecision.episodeId);
+        expect(databaseSegment.segmentId).equal(fakeDecision.segmentId);
         expect(databaseSegment.speakers).to.be.members(fakeDecision.speakers);
       });
     });

@@ -3,8 +3,7 @@ import { DecisionService } from "~/api/DecisionService";
 
 export const loader: LoaderFunction = async ({ params }) => {
   const { episodeId } = params;
-  const decisionService = new DecisionService();
-  const decisions = await decisionService.getDecisionsByEpisode(
+  const decisions = await DecisionService.getDecisionsByEpisode(
     episodeId || "0",
   );
 

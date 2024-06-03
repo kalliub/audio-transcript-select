@@ -2,8 +2,7 @@ import { LoaderFunction } from "@remix-run/node";
 import { DecisionService } from "~/api/DecisionService";
 
 export const loader: LoaderFunction = async () => {
-  const decisionService = new DecisionService();
-  const decisions = await decisionService.getDecisionsGroupedByEpisode();
+  const decisions = await DecisionService.getDecisionsGroupedByEpisode();
 
   // Download json file with all the decisions
   const json = JSON.stringify(decisions);

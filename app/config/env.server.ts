@@ -3,7 +3,10 @@ import { z } from "zod";
 const schema = z.object({
   MONGO_DB_URL: z
     .string()
-    .regex(/^mongodb\+srv:\/\/.*$/, "Should start with `mongodb+srv://`"),
+    .regex(/^mongodb(\+srv)?:\/\/.*$/, "Should start with `mongodb+srv://`"),
+  MONGO_DB_USER: z.string().optional(),
+  MONGO_DB_PASSWORD: z.string().optional(),
+  MONGO_DB_NAME: z.string().optional().default("app"),
   EPISODES_FILES_PATH: z
     .string()
     .regex(

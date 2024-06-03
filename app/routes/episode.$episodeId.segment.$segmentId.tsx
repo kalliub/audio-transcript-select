@@ -21,8 +21,8 @@ import { useState } from "react";
 
 export const loader = async ({ params }: LoaderFunctionArgs) => {
   const { episodeId = "", segmentId = "" } = params;
-  const decisionService = new DecisionService();
-  const decisionFromDatabase = await decisionService.getDecision({
+
+  const decisionFromDatabase = await DecisionService.getDecision({
     episodeId,
     segmentId,
   });
@@ -39,8 +39,8 @@ export const action = async ({ request, params }: ActionFunctionArgs) => {
       const parsedSpeakers = String(speakers)
         .split(",")
         .filter((s) => s && s.length > 0);
-      const decisionService = new DecisionService();
-      await decisionService.upsertDecision({
+
+      await DecisionService.upsertDecision({
         episodeId,
         segmentId,
         speakers: parsedSpeakers,

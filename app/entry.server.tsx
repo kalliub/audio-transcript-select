@@ -16,8 +16,11 @@ import { CacheProvider } from "@emotion/react";
 import createEmotionServer from "@emotion/server/create-instance";
 import ServerStyleContext from "./styles/server.context";
 import { getEnv } from "./config/env.server";
+import { ApiConfig } from "./api/ApiConfig";
 
 global.ENV = getEnv();
+
+new ApiConfig().initialize();
 
 const ABORT_DELAY = 5_000;
 

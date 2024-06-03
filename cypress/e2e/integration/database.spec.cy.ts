@@ -1,4 +1,3 @@
-import { Decision } from "@prisma/client";
 import { getFakeDecision } from "cypress/fixtures/decision.faker";
 
 describe("MongoDB and Prisma unit tests", () => {
@@ -28,8 +27,8 @@ describe("MongoDB and Prisma unit tests", () => {
             expect(createdDecision.speakers).to.include.members(
               mockDecision.speakers,
             );
-            expect(createdDecision.segment_id).equal(mockDecision.segment_id);
-            expect(createdDecision.episode_id).equal(mockDecision.episode_id);
+            expect(createdDecision.segmentId).equal(mockDecision.segmentId);
+            expect(createdDecision.episodeId).equal(mockDecision.episodeId);
           });
         });
       });
@@ -43,12 +42,12 @@ describe("MongoDB and Prisma unit tests", () => {
             cy.task<Decision>("db:Decision", {
               operation: "findUnique",
               decision: {
-                episode_id: decision.episode_id,
-                segment_id: decision.segment_id,
+                episodeId: decision.episodeId,
+                segmentId: decision.segmentId,
               },
             }).then((foundDecision) => {
-              expect(foundDecision.segment_id).to.equal(decision.segment_id);
-              expect(foundDecision.episode_id).to.equal(decision.episode_id);
+              expect(foundDecision.segmentId).to.equal(decision.segmentId);
+              expect(foundDecision.episodeId).to.equal(decision.episodeId);
               expect(foundDecision.speakers).to.include.members(
                 decision.speakers,
               );
@@ -68,8 +67,8 @@ describe("MongoDB and Prisma unit tests", () => {
             cy.task<Decision>("db:Decision", {
               operation: "update",
               decision: {
-                episode_id: decision.episode_id,
-                segment_id: decision.segment_id,
+                episodeId: decision.episodeId,
+                segmentId: decision.segmentId,
                 speakers: newDecisionSpeakers,
               },
             }).then((updatedDecision) => {
@@ -87,18 +86,21 @@ describe("MongoDB and Prisma unit tests", () => {
         cy.task<Error["message"]>("db:Decision", {
           operation: "create",
           decision: {},
-        }).should("include", "Argument `segment_id` is missing");
+        }).should("include", "Path `segmentId` is required.");
       });
 
       it("Blocks when trying to insert Decision with wrong data types", () => {
         cy.task<Error["message"]>("db:Decision", {
           operation: "create",
           decision: {
-            segment_id: "1234",
-            episode_id: "1234",
-            speakers: 1,
+            segmentId: "1234",
+            episodeId: "1234",
+            speakers: "this should not work",
           },
-        }).should("include", "Invalid value provided");
+        }).should(
+          "include",
+          "Validator failed for path `speakers` with value `this should not work`",
+        );
       });
 
       it("Blocks when a Decision is inserted with a duplicated segment", () => {
@@ -108,26 +110,23 @@ describe("MongoDB and Prisma unit tests", () => {
             operation: "create",
             decision: mockDecision,
           })
-            .its("segment_id")
-            .should("equal", mockDecision.segment_id);
+            .its("segmentId")
+            .should("equal", mockDecision.segmentId);
 
           cy.task<Error["message"]>("db:Decision", {
             operation: "create",
             decision: mockDecision,
-          }).should(
-            "include",
-            "Unique constraint failed on the constraint: `Decision_segment_id_episode_id_key`",
-          );
+          }).should("include", "unique_decision_per_episode_segment");
 
           cy.task<Decision>("db:Decision", {
             operation: "create",
             decision: {
               ...mockDecision,
-              segment_id: mockDecision.segment_id + 1,
+              segmentId: mockDecision.segmentId + 1,
             },
           })
-            .its("segment_id")
-            .should("equal", mockDecision.segment_id + 1);
+            .its("segmentId")
+            .should("equal", mockDecision.segmentId + 1);
         });
       });
     });

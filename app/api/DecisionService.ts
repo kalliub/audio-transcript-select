@@ -1,17 +1,21 @@
+import Decision from "schemas/Decision";
 import { ApiConfig } from "./ApiConfig";
 
 export class DecisionService extends ApiConfig {
-  public async getDecisionsGroupedByEpisode() {
+  /** Gets all Decisions, grouped by episode
+   * @returns An object with episode IDs as keys and an array of Decisions as values
+   */
+  static async getDecisionsGroupedByEpisode(): Promise<{
+    [episode: number]: Decision[];
+  }> {
     try {
-      const decisionRecords = await this.prisma.decision.findMany({
-        orderBy: {
-          segment_id: "asc",
-        },
+      const decisionRecords = await Decision.find().sort({
+        segmentId: "asc",
       });
 
       const groupedByEpisode = decisionRecords.reduce(
         (grouped: { [episode: number]: typeof decisionRecords }, decision) => {
-          const key = decision.episode_id;
+          const key = decision.episodeId;
           if (!grouped[key]) {
             grouped[key] = [];
           }
@@ -28,16 +32,15 @@ export class DecisionService extends ApiConfig {
     }
   }
 
-  public async getDecisionsByEpisode(episodeId: string) {
+  /** Gets all Decisions for a given episode */
+  static async getDecisionsByEpisode(episodeId: string): Promise<Decision[]> {
     try {
-      const decisionRecords = await this.prisma.decision.findMany({
-        where: {
-          episode_id: parseInt(episodeId, 10),
-        },
-        orderBy: {
-          segment_id: "asc",
-        },
+      const decisionRecords = await Decision.find({
+        episodeId: parseInt(episodeId, 10),
+      }).sort({
+        segmentId: "asc",
       });
+
       return decisionRecords;
     } catch (error) {
       console.error("Error getting decisions:", error);
@@ -45,23 +48,20 @@ export class DecisionService extends ApiConfig {
     }
   }
 
-  public async getDecision({
+  /** Gets a Decision by episode and segment ID */
+  static async getDecision({
     episodeId,
     segmentId,
   }: {
     episodeId: string;
     segmentId: string;
-  }) {
+  }): Promise<Decision | null> {
     try {
       const parsedEpisodeId = parseInt(episodeId, 10);
       const parsedSegmentId = parseInt(segmentId, 10);
-      const decisionRecord = await this.prisma.decision.findUnique({
-        where: {
-          unique_decision_per_episode_segment: {
-            episode_id: parsedEpisodeId,
-            segment_id: parsedSegmentId,
-          },
-        },
+      const decisionRecord = await Decision.findOne({
+        episodeId: parsedEpisodeId,
+        segmentId: parsedSegmentId,
       });
 
       return decisionRecord;
@@ -71,7 +71,8 @@ export class DecisionService extends ApiConfig {
     }
   }
 
-  public async upsertDecision({
+  /** Updates a given Decision. If it doesn't exists, creates one. */
+  static async upsertDecision({
     episodeId,
     segmentId,
     speakers,
@@ -82,45 +83,26 @@ export class DecisionService extends ApiConfig {
   }) {
     const parsedEpisodeId = parseInt(episodeId, 10);
     const parsedSegmentId = parseInt(segmentId, 10);
-    try {
-      const decisionRecord = await this.prisma.decision.findUnique({
-        where: {
-          unique_decision_per_episode_segment: {
-            episode_id: parsedEpisodeId,
-            segment_id: parsedSegmentId,
-          },
-        },
-      });
 
-      if (decisionRecord) {
-        // Update existing record by appending new decisions to the array
-        const result = await this.prisma.decision.update({
-          where: {
-            unique_decision_per_episode_segment: {
-              episode_id: parsedEpisodeId,
-              segment_id: parsedSegmentId,
-            },
-          },
-          data: {
-            speakers,
-          },
-        });
-        console.log("Decisions updated:", result);
-        return result;
-      } else {
-        // Create a new record with the initial set of decisions
-        const result = await this.prisma.decision.create({
-          data: {
-            episode_id: parsedEpisodeId,
-            segment_id: parsedSegmentId,
-            speakers,
-          },
-        });
-        console.log("Decisions created:", result);
-        return result;
-      }
+    try {
+      const result = await Decision.findOneAndUpdate(
+        {
+          episodeId: parsedEpisodeId,
+          segmentId: parsedSegmentId,
+        },
+        {
+          speakers,
+        },
+        {
+          upsert: true,
+          new: true,
+          runValidators: true,
+        },
+      );
+      console.log("Decisions updated:", result);
+      return result;
     } catch (error) {
-      console.error("Error handling decision:", error);
+      console.error("Error pushing decision:", error);
       throw new Error("Error pushing Decision to the database: " + error);
     }
   }

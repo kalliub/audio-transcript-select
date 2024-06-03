@@ -113,8 +113,8 @@ describe("Episode Page", () => {
         operation: "create",
         decision: {
           ...getFakeDecision(),
-          episode_id: 1,
-          segment_id: 0,
+          episodeId: 1,
+          segmentId: 0,
         },
       });
 
@@ -146,8 +146,8 @@ describe("Episode Page", () => {
         operation: "create",
         decision: {
           speakers: fakeDecisionSpeakers,
-          episode_id: 1,
-          segment_id: 0,
+          episodeId: 1,
+          segmentId: 0,
         },
       });
 

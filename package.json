@@ -5,12 +5,12 @@
   "type": "module",
   "scripts": {
     "build": "remix vite:build",
-    "dev": "remix vite:dev",
+    "dev": "remix vite:dev --host",
     "lint": "eslint --ignore-path .gitignore --cache --cache-location ./node_modules/.cache/eslint .",
-    "start": "remix-serve ./build/server/index.js",
+    "start": "dotenv -e .env remix-serve ./build/server/index.js",
     "typecheck": "tsc",
-    "test": "cypress run --browser chrome",
-    "test:open": "cypress open --e2e --browser chrome"
+    "test": "dotenv -e .env cypress run --browser chrome",
+    "test:open": "dotenv -e .env cypress open --e2e --browser chrome"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
