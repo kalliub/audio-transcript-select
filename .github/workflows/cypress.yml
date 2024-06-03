@@ -9,6 +9,15 @@ jobs:
   test:
     runs-on: ubuntu-24.04
 
+    env:
+      MONGO_DB_URL: mongodb://localhost:27017/
+      MONGO_DB_NAME: test
+      MONGO_DB_USER: root
+      MONGO_DB_PASSWORD: example
+      USE_TEST_DB: true
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+
     container:
       image: cypress/browsers:node-20.9.0-chrome-118.0.5993.88-1-ff-118.0.2-edge-118.0.2088.46-1
       options: --user 1001
@@ -16,9 +25,7 @@ jobs:
     services:
       mongodb:
         image: mongo:latest
-        env:
-          MONGO_INITDB_ROOT_USERNAME: root
-          MONGO_INITDB_ROOT_PASSWORD: example
+          
         ports:
           - 27017:27017
 
