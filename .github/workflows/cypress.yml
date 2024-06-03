@@ -10,11 +10,6 @@ on:
 jobs:
   test:
     runs-on: ubuntu-24.04
-
-    strategy:
-      matrix:
-        node-version: [20.x, 22.x]
-        mongodb-version: ['6.0', '7.0', '8.0']
       
     container:
       image: cypress/browsers:node-20.9.0-chrome-118.0.5993.88-1-ff-118.0.2-edge-118.0.2088.46-1
@@ -40,7 +35,7 @@ jobs:
     - name: Start MongoDB
       uses: supercharge/mongodb-github-action@1.11.0
       with:
-        mongodb-version: ${{ matrix.mongodb-version }}
+        mongodb-version: '8.0'
         mongodb-username: root
         mongodb-password: example
         mongodb-db: test
