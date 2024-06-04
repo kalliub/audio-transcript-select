@@ -24,13 +24,14 @@ services:
       - MONGO_DB_URL=mongodb://mongo:27017/
     networks:
       - default
+
     # For production
-    # command: npm start
+    command: npm start
 
     # For development
-    volumes:
-      - .:/app
-    command: npm run dev
+    # volumes:
+    #   - .:/app
+    # command: npm run dev
 
 
 volumes:

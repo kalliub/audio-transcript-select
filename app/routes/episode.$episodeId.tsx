@@ -19,6 +19,8 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 
   const parsedJsonFile = await getJsonEpisodeFile(episodeId);
 
+  if (!parsedJsonFile) throw new Error("Episode file not found.");
+
   return json(parsedJsonFile, {
     headers: {
       "Cache-Control": "public, max-age=3600",

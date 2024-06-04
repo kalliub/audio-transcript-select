@@ -1,6 +1,6 @@
 import { getFakeDecision } from "cypress/fixtures/decision.faker";
 
-describe("MongoDB and Prisma unit tests", () => {
+describe("MongoDB unit tests", () => {
   beforeEach(() => {
     cy.task("db:Decision:drop");
     cy.wrap(getFakeDecision()).as("mockDecision");
