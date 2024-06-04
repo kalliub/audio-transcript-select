@@ -1,5 +1,5 @@
-export const extractSpeakersArrayFromString = (rawSpeakers: string) => {
-  return (rawSpeakers.match(new RegExp(/\d*/g)) ?? []).filter((s) => s.length);
+export const extractSpeakersArrayFromString = (rawSpeakers = "") => {
+  return (RegExp(/\d*/g).exec(rawSpeakers) ?? []).filter((s) => s.length);
 };
 
 export const cleanSpeakersString = (rawSpeakers: string) => {
