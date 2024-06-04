@@ -1,11 +1,8 @@
-name: CI
+name: Cypress
 
 on:
   workflow_dispatch:
   push:
-
-  
-
 
 jobs:
   test:
@@ -41,18 +38,9 @@ jobs:
       with:
         node-version: '18'
 
-    # - name: Start MongoDB
-    #   uses: supercharge/mongodb-github-action@1.11.0
-    #   with:
-    #     mongodb-version: latest
-    #     mongodb-username: root
-    #     mongodb-password: example
-    #     mongodb-db: test
-
     - name: Cypress run
       uses: cypress-io/github-action@v6
       with:
         build: npm run build
         start: npm start
-        # wait-on: 'http://localhost:27017'
         browser: chrome

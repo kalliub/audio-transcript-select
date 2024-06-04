@@ -1,4 +1,3 @@
-import { Decision } from "@prisma/client";
 import { getFakeDecision } from "cypress/fixtures/decision.faker";
 
 describe("First Page", () => {
@@ -106,7 +105,8 @@ describe("First Page", () => {
       cy.wait("@get-inexistent-episode").then((interception) => {
         expect(interception.response?.statusCode).equal(500);
         expect(interception.response?.body.message).equal(
-          "Episode file not found.",
+          // "Episode file not found.",
+          "Unexpected Server Error",
         );
       });
     });

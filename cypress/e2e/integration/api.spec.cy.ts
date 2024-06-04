@@ -1,4 +1,3 @@
-import { Decision } from "@prisma/client";
 import { getFakeDecision } from "cypress/fixtures/decision.faker";
 
 describe("API Integration Tests", () => {
