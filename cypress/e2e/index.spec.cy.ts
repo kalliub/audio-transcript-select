@@ -103,11 +103,8 @@ describe("First Page", () => {
 
       cy.get("#goto-episode").click();
       cy.wait("@get-inexistent-episode").then((interception) => {
-        expect(interception.response?.statusCode).equal(500);
-        expect(interception.response?.body.message).oneOf([
-          "Episode file not found.",
-          "Unexpected Server Error",
-        ]);
+        expect(interception.response?.statusCode).equal(404);
+        expect(interception.response?.body).equal("Episode file not found.");
       });
     });
   });

@@ -10,6 +10,6 @@ export const getJsonEpisodeFile = async (
 
     return JSON.parse(jsonFile.toString());
   } catch (err) {
-    throw new Error("Episode file not found.");
+    throw new Response("Episode file not found.", { status: 404 });
   }
 };

@@ -9,6 +9,7 @@ import {
   useLocation,
   useNavigate,
   useParams,
+  useRouteError,
 } from "@remix-run/react";
 import { useEffect } from "react";
 import CustomIcon from "~/components/CustomIcon";
@@ -30,6 +31,21 @@ export const loader = async ({ params }: LoaderFunctionArgs) => {
 };
 
 export const shouldRevalidate: ShouldRevalidateFunction = () => false;
+
+export const ErrorBoundary = () => {
+  const error = useRouteError() as {
+    status: number;
+    data: string;
+  } | null;
+
+  if (error?.status === 404 && error?.data === "Episode file not found.") {
+    return (
+      <Grid container justifyContent="center" alignItems="center" height="100%">
+        <h1>Episode file not found.</h1>
+      </Grid>
+    );
+  }
+};
 
 const Episode = () => {
   const location = useLocation();
