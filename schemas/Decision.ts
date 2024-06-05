@@ -26,7 +26,5 @@ DecisionSchema.index(
 );
 
 const Decision = mongoose.model<Decision>("Decision", DecisionSchema);
-Decision.createIndexes();
-Decision.createCollection();
 
 export default Decision;

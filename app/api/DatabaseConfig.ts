@@ -1,5 +1,6 @@
 import { singleton } from "~/utils/singleton.server";
 import * as mongoose from "mongoose";
+import Decision from "schemas/Decision";
 
 export default class {
   private readonly getEnvs = () => {
@@ -11,6 +12,13 @@ export default class {
     };
   };
 
+  private readonly createIndexesAndCollections = async (
+    db: typeof import("mongoose"),
+  ) => {
+    db.connection.db.createCollection("decisions");
+    Decision.createIndexes();
+  };
+
   private readonly connectDb = () =>
     singleton("mongoose", async () => {
       const { dbUrl, dbName, username, password } = this.getEnvs();
@@ -19,12 +27,12 @@ export default class {
       if (!dbUrl)
         throw new Error("Missing MONGO_DB_URL in environment variables");
 
-      console.log("debug\n\n", this.getEnvs());
-
       const db = await mongoose.connect(dbUrl, {
         auth,
         dbName: dbName,
       });
+
+      this.createIndexesAndCollections(db);
 
       return db;
     });
