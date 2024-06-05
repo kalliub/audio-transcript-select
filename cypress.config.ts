@@ -11,10 +11,10 @@ export default defineConfig({
   e2e: {
     setupNodeEvents(on) {
       on("before:run", async () => {
-        const username = "test-user";
-        const password = "test-password";
-        const dbUrl = "mongodb://localhost:27017/";
-        const dbName = "test";
+        const dbUrl = process.env.MONGO_DB_URL ?? "mongodb://localhost:27017/";
+        const dbName = process.env.MONGO_DB_NAME ?? "test";
+        const username = process.env.MONGO_DB_USER ?? "test-user";
+        const password = process.env.MONGO_DB_PASSWORD ?? "test-password";
 
         await mongoose.connect(dbUrl, {
           auth: {
