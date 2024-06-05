@@ -10,12 +10,6 @@ describe("MongoDB unit tests", () => {
     cy.task("db:Decision:drop");
   });
 
-  context("Database testing requirements", () => {
-    it("USE_TEST_DB environment variable is `true`", () => {
-      expect(Cypress.env().USE_TEST_DB).to.equal("true");
-    });
-  });
-
   context("DB Model: Decision", () => {
     context("Happy Path", () => {
       it("Create a Decision on the Database", () => {
@@ -75,6 +69,32 @@ describe("MongoDB unit tests", () => {
               expect(updatedDecision.speakers).to.include.members(
                 newDecisionSpeakers,
               );
+            });
+          });
+        });
+      });
+
+      it("Deletes all Decisions from the Database", () => {
+        cy.get<Decision>("@mockDecision").then((mockDecision) => {
+          cy.task<Decision>("db:Decision", {
+            operation: "create",
+            decision: mockDecision,
+          }).then((createdDecision) => {
+            expect(createdDecision.speakers).to.include.members(
+              mockDecision.speakers,
+            );
+            expect(createdDecision.segmentId).equal(mockDecision.segmentId);
+            expect(createdDecision.episodeId).equal(mockDecision.episodeId);
+            cy.task("db:Decision:drop").then(() => {
+              cy.task<Decision>("db:Decision", {
+                operation: "findUnique",
+                decision: {
+                  episodeId: createdDecision.episodeId,
+                  segmentId: createdDecision.segmentId,
+                },
+              }).then((foundDecision) => {
+                expect(foundDecision).to.be.null;
+              });
             });
           });
         });

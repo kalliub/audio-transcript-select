@@ -16,18 +16,16 @@ jobs:
       mongodb:
         image: mongo:latest
         env:
-          MONGO_INITDB_ROOT_USERNAME: root
-          MONGO_INITDB_ROOT_PASSWORD: example
+          MONGO_INITDB_ROOT_USERNAME: test-user
+          MONGO_INITDB_ROOT_PASSWORD: test-password
         ports:
           - 27017:27017
 
     env:
       MONGO_DB_URL: mongodb://mongodb:27017/
       MONGO_DB_NAME: test
-      MONGO_DB_USER: root
-      MONGO_DB_PASSWORD: example
-      EPISODES_FILES_PATH: /app/episodes
-      USE_TEST_DB: true
+      MONGO_DB_USER: test-user
+      MONGO_DB_PASSWORD: test-password
 
     steps:
     - name: Checkout code

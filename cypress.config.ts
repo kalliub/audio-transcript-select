@@ -1,18 +1,30 @@
+import mongoose from "mongoose";
 import { defineConfig } from "cypress";
-import { ApiConfig } from "./app/api/ApiConfig";
-import { getEnv } from "./app/config/env.server";
 import Decision from "./schemas/Decision";
 import * as downloadFilePlugin from "cypress-downloadfile/lib/addPlugin.js";
 const downloadFile = downloadFilePlugin.downloadFile;
 
-new ApiConfig().initialize();
-
 export default defineConfig({
   projectId: "99on42",
   retries: 2,
-  env: getEnv(),
+  experimentalInteractiveRunEvents: true,
   e2e: {
     setupNodeEvents(on) {
+      on("before:run", async () => {
+        const username = "test-user";
+        const password = "test-password";
+        const dbUrl = "mongodb://localhost:27017/";
+        const dbName = "test";
+
+        await mongoose.connect(dbUrl, {
+          auth: {
+            username,
+            password,
+          },
+          dbName,
+        });
+      });
+
       on("task", {
         downloadFile,
 

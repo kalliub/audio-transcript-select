@@ -14,12 +14,7 @@ const schema = z.object({
       "Should start with a slash, but not end with a slash. Format example: `/app/data`",
     )
     .optional()
-    .default("/app/data"),
-  USE_TEST_DB: z
-    .string()
-    .regex(/^(true|false)$/)
-    .optional()
-    .default("false"),
+    .default("/app/episodes"),
 });
 
 type ENV = z.infer<typeof schema>;

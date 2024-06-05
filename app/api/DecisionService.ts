@@ -1,7 +1,6 @@
 import Decision from "schemas/Decision";
-import { ApiConfig } from "./ApiConfig";
 
-export class DecisionService extends ApiConfig {
+export class DecisionService {
   /** Gets all Decisions, grouped by episode
    * @returns An object with episode IDs as keys and an array of Decisions as values
    */

@@ -1,5 +1,4 @@
 import mongoose, { Schema } from "mongoose";
-import { singleton } from "../app/utils/singleton.server";
 
 const DecisionSchema = new Schema(
   {
@@ -26,8 +25,8 @@ DecisionSchema.index(
   { unique: true, name: "unique_decision_per_episode_segment" },
 );
 
-const Decision = singleton("DecisionModel", () =>
-  mongoose.model<Decision>("Decision", DecisionSchema),
-);
+const Decision = mongoose.model<Decision>("Decision", DecisionSchema);
+Decision.createIndexes();
+Decision.createCollection();
 
 export default Decision;

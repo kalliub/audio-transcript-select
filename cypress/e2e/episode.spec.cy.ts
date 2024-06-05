@@ -3,11 +3,7 @@ import { cleanSpeakersString } from "~/utils/formatters";
 
 describe("Episode Page", () => {
   const getEpisodes = () => {
-    return cy
-      .fixture<
-        Segment[]
-      >(`../../${Cypress.env("EPISODES_FILES_PATH")}/1/data.json`)
-      .as("episodes");
+    return cy.fixture<Segment[]>(`episodeData`).as("episodes");
   };
 
   beforeEach(() => {
