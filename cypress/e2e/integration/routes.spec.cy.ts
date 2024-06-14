@@ -1,6 +1,6 @@
 import { getFakeDecision } from "cypress/fixtures/decision.faker";
 
-describe("API Integration Tests", () => {
+describe("Routes request tests", () => {
   beforeEach(() => {
     cy.task("db:Decision:drop");
   });
@@ -56,7 +56,7 @@ describe("API Integration Tests", () => {
       });
     });
   });
-  context("Episode assets", () => {});
-  context("/episode/:episodeId/segment/:segmentId", () => {});
-  context("/episode/:episodeId/check", () => {});
+  // context("Episode assets", () => {});
+  // context("/episode/:episodeId/segment/:segmentId", () => {});
+  // context("/episode/:episodeId/check", () => {});
 });
